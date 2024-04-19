@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fire_notes_app/content/fs_admin_table.dart';
+import 'package:fire_notes_app/content/notes/item_note.dart';
+import 'package:fire_notes_app/create_form/new_note_form.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
@@ -30,10 +33,12 @@ class HomePage extends StatelessWidget {
       body: FirestoreListView(
         padding: EdgeInsets.symmetric(horizontal: 18),
         pageSize: 15,
-        query: FirebaseFirestore.instance.collection("tweet"),
+        query: FirebaseFirestore.instance
+            .collection("notes")
+            .where("userId", isEqualTo: FirebaseAuth.instance.currentUser!.uid),
         itemBuilder: (BuildContext context,
             QueryDocumentSnapshot<Map<String, dynamic>> document) {
-          return ItemPublic(publicFData: document.data());
+          return ItemNote(noteContent: document.data());
         },
       ),
       floatingActionButtonLocation: ExpandableFab.location,
@@ -48,6 +53,11 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               print("New note button");
               _fabKey.currentState?.toggle();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => NewNoteForm(),
+                ),
+              );
             },
           ),
           FloatingActionButton.small(

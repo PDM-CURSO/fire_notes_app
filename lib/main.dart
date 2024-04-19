@@ -21,6 +21,7 @@ void main() async {
         BlocProvider(
           create: (context) => AuthBloc()..add(VerifyAuthEvent()),
         ),
+        ChangeNotifierProvider(create: (context) => NotesProvider()),
       ],
       child: MyApp(),
     ),
